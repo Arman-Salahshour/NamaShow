@@ -52,48 +52,20 @@ class SubPurchase(models.Model):
         return self.subscription
 
 
-class Movie(models.Model):
-    movieID = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=150)
-    price = models.PositiveIntegerField()
-    duration = models.PositiveIntegerField()
-    rating = models.IntegerField(default=0, validators=[MaxValueValidator(10), MinValueValidator(0),])
-    releaseDate = models.DateTimeField(null=True)
-    details = models.TextField()
-    saleStatus = models.BooleanField(default=False)
-    salePercentage = models.PositiveIntegerField(default=0)
-    saleExpiration = models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return self.title
-
-
-class TVShow(models.Model):
-    showID = models.AutoField(primary_key=True)
+class Film(models.Model):
+    filmID = models.AutoField(primary_key=True)
     title = models.CharField(max_length=150)
     price = models.PositiveIntegerField()
     seasons = models.IntegerField(default=1)
     duration = models.PositiveIntegerField()
+    statusOf = models.IntegerField(default=1, validators=[MaxValueValidator(4), MinValueValidator(1),])
+    typeOf = models.IntegerField(validators=[MaxValueValidator(4), MinValueValidator(1),])
     rating = models.IntegerField(default=0, validators=[MaxValueValidator(10), MinValueValidator(0),])
     releaseDate = models.DateTimeField(null=True)
-    showStatus = models.IntegerField(default=1, validators=[MaxValueValidator(4), MinValueValidator(1),])
     details = models.TextField()
     saleStatus = models.BooleanField(default=False)
     salePercentage = models.PositiveIntegerField(default=0)
     saleExpiration = models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return self.title
-
-
-class Film(models.Model):
-    filmID = models.AutoField(primary_key=True)
-    saleStatus = models.BooleanField(default=False)
-    salePercentage = models.PositiveIntegerField(default=0)
-    saleExpiration = models.DateTimeField(auto_now_add=True)
-
-    movie = models.ForeignKey(Movie, blank=True, on_delete=models.CASCADE)
-    tvshow = models.ForeignKey(TVShow, blank=True, on_delete=models.CASCADE)
     
     def __str__(self):
         return f"{self.movie}{self.tvshow}"
