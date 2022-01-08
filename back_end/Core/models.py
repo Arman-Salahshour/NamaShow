@@ -92,7 +92,7 @@ class Video(models.Model):
     encoder = models.CharField(max_length=20)
     directoryLocation = models.TextField()
     
-    film = models.ForeignKey(Film, on_delete=models.CASCADE)
+    film = models.ForeignKey(Film, null=True, on_delete=models.SET_NULL)
     
     def __str__(self):
         return f"{self.film}: s{self.season}e{self.episode} {self.qualityWidth} {self.encoder} {self.sizeOf}mB"
@@ -120,11 +120,12 @@ class Genre(models.Model):
 
 class Review(models.Model):
     reviewID = models.AutoField(primary_key=True)
-    filmID = models.PositiveIntegerField()
-    userID = models.PositiveIntegerField()
     textOf = models.TextField()
     dateOf = models.DateField(auto_now_add=True)
     rating = models.IntegerField(default=0, validators=[MaxValueValidator(10), MinValueValidator(0),])
+    
+    film = models.ForeignKey(Film, null=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
 
 
 class FilmPurchase(models.Model):

@@ -16,3 +16,9 @@ class CelebritySerializer(serializers.ModelSerializer):
         read_only_fields = ('celebID',)
 
 
+# class VideoSerilizer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Celebrity
+#         fields = ('videoID', 'duration', 'qualityHeight', 'qualityWidth', 'sizeOf',
+#                   'episode', 'season', 'encoder', 'directoryLocation')
+#         read_only_fields = ('celebID',)
