@@ -23,15 +23,15 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    username = models.CharField(max_length=100, unique=True, validators=[RegexValidator(regex="^(?=[a-z0-9._]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$")])
     email= models.EmailField(max_length=100, unique=True,  validators=[EmailValidator()])
-    username = models.CharField(max_length=100, unique=True, validators=[RegexValidator(regex="^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$")])
+    name = models.CharField(max_length=100)
     isSuspended = models.BooleanField(default=False)
     isAdmin = models.BooleanField(default=False)
     emailActivation = models.BooleanField(default=False)
-    name = models.CharField(max_length=100)
     balance = models.IntegerField(default=0)
 
-    objects = UserManager
+    objects = UserManager()
 
     USERNAME_FIELD = 'username'
 
