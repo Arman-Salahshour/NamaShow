@@ -110,7 +110,7 @@ class Celebrity(models.Model):
 
 class Genre(models.Model):
     genreID = models.AutoField(primary_key=True)
-    nameOf = models.CharField(max_length=150)
+    nameOf = models.CharField(max_length=150, unique=True)
     details = models.TextField()
     
     def __str__(self):
