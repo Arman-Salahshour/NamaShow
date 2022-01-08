@@ -6,10 +6,12 @@ from Film import views
 
 router = DefaultRouter()
 
-router.register('genres', views.GenreViewSet)
+router.register('genre', views.GenreViewSet)
+router.register('celebrity', views.CelebrityViewSet)
 
 app_name = 'Film'
 
 urlpatterns = [
+    path('', include(router.urls)),
     path('', include(router.urls))
 ]

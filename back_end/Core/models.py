@@ -100,9 +100,10 @@ class Video(models.Model):
 
 class Celebrity(models.Model):
     celebID = models.AutoField(primary_key=True)
-    nameOf = models.CharField(max_length=150)
+    nameOf = models.CharField(max_length=255)
     gender = models.BooleanField()
-    dateOfBirth = models.DateTimeField(null=True)
+    dateOfBirth = models.DateField(null=True)
+    nationality = models.CharField(null=True, max_length=255)
     
     def __str__(self):
         return self.nameOf
@@ -110,7 +111,7 @@ class Celebrity(models.Model):
 
 class Genre(models.Model):
     genreID = models.AutoField(primary_key=True)
-    nameOf = models.CharField(max_length=150, unique=True)
+    nameOf = models.CharField(max_length=100, unique=True)
     details = models.TextField()
     
     def __str__(self):
