@@ -1,12 +1,14 @@
 from django.contrib.auth import get_user_model, authenticate
 from rest_framework import serializers
+from rest_framework.authtoken.models import Token as DefaultTokenModel
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('username','email', 'password', 'name')
+        fields = ('username','email', 'password', 'name', 'balance', 'emailActivation', 'isSuspended')
         extra_kwargs = {'password': {'write_only': True, 'min_length': 8}}
+        read_only_fields = ('balance', 'isSuspended', 'emailActivation')
 
     def create(self, validated_data):
         return get_user_model().objects.createUser(**validated_data)
@@ -41,3 +43,10 @@ class AuthTokenSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
+
+
+class TokenSerializer(serializers.ModelSerializer):   
+    user = UserSerializer()
+    class Meta:
+        model = DefaultTokenModel
+        fields = ('key', 'user',)
