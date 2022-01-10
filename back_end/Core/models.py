@@ -23,6 +23,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    userID = models.AutoField(primary_key=True)
     username = models.CharField(max_length=100, unique=True, validators=[RegexValidator(regex="^(?=[a-z0-9._]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$")])
     email= models.EmailField(max_length=100, unique=True,  validators=[EmailValidator()])
     name = models.CharField(max_length=100)
