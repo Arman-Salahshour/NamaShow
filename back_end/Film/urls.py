@@ -14,4 +14,5 @@ app_name = 'Film'
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('film/<int:filmID>', views.RetrieveFilmViewSet.as_view(), name='retFilm')
 ]
