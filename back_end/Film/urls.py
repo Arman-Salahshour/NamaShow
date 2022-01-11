@@ -9,11 +9,14 @@ router = DefaultRouter()
 router.register('genre', views.GenreViewSet)
 router.register('celebrity', views.CelebrityViewSet)
 router.register('film', views.FilmViewSet)
+router.register('film/create', views.FilmCreateViewSet)
 router.register('video', views.VideoViewSet)
 
 app_name = 'Film'
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('film/<int:filmID>', views.RetrieveFilmViewSet.as_view(), name='retFilm')
+    path('film/<int:filmID>', views.FilmRetrieveViewSet.as_view(), name='retFilm'),
+    path('genre/<int:genreID>', views.GenreRetrieveViewSet.as_view(), name='retGenre'),
+    path('celebrity/<int:celebID>', views.CelebrityRetrieveViewSet.as_view(), name='retCeleb'),
 ]

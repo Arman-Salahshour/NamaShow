@@ -16,12 +16,58 @@ class CelebritySerializer(serializers.ModelSerializer):
         read_only_fields = ('celebID',)
 
 
-class FilmSerializer(serializers.ModelSerializer):
+class FilmListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Film
+        fields = ('filmID', 'title', 'rating',)
+        read_only_fields = ('filmID', 'title', 'rating',)
+
+
+class FilmCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Film
         fields = ('filmID', 'title', 'price', 'seasons', 'duration',
                   'statusOf', 'typeOf', 'numberOfFilminoRatings', 'filminoRating',
-                  'rating', 'releaseDate', 'details', 'salePercentage', 'saleExpiration',)
+                  'rating', 'releaseDate', 'details', 'salePercentage', 'saleExpiration',
+                  'filmGenre', 'filmActor', 'filmDirector', 'filmProducer')
+        read_only_fields = ('filmID',)
+
+
+class FilmRetrieveSerializer(serializers.ModelSerializer):
+    class GenreFilmSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Genre
+            fields = ('nameOf',)
+            # read_only_fields = ('nameOf',)
+        
+        def to_representation(self, instance):
+            """Convert `username` to lowercase."""
+            ret = super().to_representation(instance)
+            ret = ret['nameOf'] 
+            return ret
+
+    class CelebrityFilmSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Celebrity
+            fields = ('nameOf',)
+            read_only_fields = ('nameOf',)
+        
+        def to_representation(self, instance):
+            """Convert `username` to lowercase."""
+            ret = super().to_representation(instance)
+            ret = ret['nameOf'] 
+            return ret
+
+    filmGenre = GenreFilmSerializer(read_only=True, many=True)
+    filmActor = CelebrityFilmSerializer(read_only=True, many=True)
+    filmDirector = CelebrityFilmSerializer(read_only=True, many=True)
+    filmProducer = CelebrityFilmSerializer(read_only=True, many=True)
+    class Meta:
+        model = Film
+        fields = ('filmID', 'title', 'price', 'seasons', 'duration',
+                  'statusOf', 'typeOf', 'numberOfFilminoRatings', 'filminoRating',
+                  'rating', 'releaseDate', 'details', 'salePercentage', 'saleExpiration',
+                  'filmGenre', 'filmActor', 'filmDirector', 'filmProducer')
         read_only_fields = ('filmID',)
 
 
