@@ -4,7 +4,7 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.utils import serializer_helpers
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
-from Core.models import Celebrity, Genre, Film
+from Core.models import Celebrity, Genre, Film, Video
 from Film import serializers
 
 # Create your views here.
@@ -59,3 +59,17 @@ class RetrieveFilmViewSet(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return self.queryset
+
+
+class VideoViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
+    authentication_classes = (TokenAuthentication,)
+    """ In case we want to make access to this list available to users only. """
+#    permission_classes = (IsAuthenticated,)
+    queryset = Video.objects.all()
+    serializer_class = serializers.VideoSerializer
+
+    def get_queryset(self):
+        return self.queryset
+    
+    def perform_create(self, serializer):
+        serializer.save()

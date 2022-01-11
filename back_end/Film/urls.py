@@ -9,6 +9,7 @@ router = DefaultRouter()
 router.register('genre', views.GenreViewSet)
 router.register('celebrity', views.CelebrityViewSet)
 router.register('film', views.FilmViewSet)
+router.register('video', views.VideoViewSet)
 
 app_name = 'Film'
 

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from Core.models import Celebrity, Genre, Film
+from Core.models import Celebrity, Genre, Film, Video
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -25,9 +25,9 @@ class FilmSerializer(serializers.ModelSerializer):
         read_only_fields = ('filmID',)
 
 
-# class VideoSerilizer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Celebrity
-#         fields = ('videoID', 'duration', 'qualityHeight', 'qualityWidth', 'sizeOf',
-#                   'episode', 'season', 'encoder', 'directoryLocation')
-#         read_only_fields = ('celebID',)
+class VideoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Video
+        fields = ('videoID', 'film', 'duration', 'qualityHeight', 'qualityWidth', 'sizeOf',
+                  'episode', 'season', 'encoder', 'directoryLocation')
+        read_only_fields = ('videoID',)
