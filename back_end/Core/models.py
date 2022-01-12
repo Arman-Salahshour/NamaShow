@@ -79,7 +79,7 @@ class Film(models.Model):
     saleExpiration = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"{self.movie}{self.tvshow}"
+        return f"{self.title}"
 
 
 class Video(models.Model):
