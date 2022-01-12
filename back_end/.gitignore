@@ -1,1 +1,6 @@
 /env
+/repo
+/stream/node_modules/
+package.json
+package-lock.json
+.gitignore
