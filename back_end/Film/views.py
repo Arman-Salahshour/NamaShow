@@ -1,7 +1,7 @@
 from rest_framework import viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.utils import serializer_helpers
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.pagination import PageNumberPagination
@@ -12,12 +12,11 @@ from Film import serializers
 
 
 class GenreViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
-    authentication_classes = (TokenAuthentication,)
-    """ In case we want to make access to this list available to users only. """
-#   permission_classes = (IsAuthenticated,)
     queryset = Genre.objects.all()
     serializer_class = serializers.GenreSerializer
     pagination_class = PageNumberPagination
+    permission_classes = (AllowAny,)
+
 
     def get_queryset(self):
         return self.queryset
@@ -28,6 +27,7 @@ class GenreViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
 
 class GenreRetrieveViewSet(RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.GenreSerializer
+    permission_classes = (AllowAny,)
     queryset = Genre.objects.all()
     lookup_field = 'genreID'
 
@@ -36,9 +36,7 @@ class GenreRetrieveViewSet(RetrieveUpdateDestroyAPIView):
 
 
 class CelebrityViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
-    authentication_classes = (TokenAuthentication,)
-    """ In case we want to make access to this list available to users only. """
-#    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     queryset = Celebrity.objects.all()
     serializer_class = serializers.CelebritySerializer
     pagination_class = PageNumberPagination
@@ -51,6 +49,7 @@ class CelebrityViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Cr
 
 
 class CelebrityRetrieveViewSet(RetrieveUpdateDestroyAPIView):
+    permission_classes = (AllowAny,)
     serializer_class = serializers.CelebritySerializer
     queryset = Celebrity.objects.all()
     lookup_field = 'celebID'
@@ -60,9 +59,7 @@ class CelebrityRetrieveViewSet(RetrieveUpdateDestroyAPIView):
 
 
 class FilmViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
-    authentication_classes = (TokenAuthentication,)
-    """ In case we want to make access to this list available to users only. """
-#    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     queryset = Film.objects.all()
     serializer_class = serializers.FilmListSerializer
     pagination_class = PageNumberPagination
@@ -75,9 +72,7 @@ class FilmViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateM
 
 
 class FilmCreateViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
-    authentication_classes = (TokenAuthentication,)
-    """ In case we want to make access to this list available to users only. """
-#    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     queryset = Film.objects.none()
     serializer_class = serializers.FilmCreateSerializer
     pagination_class = PageNumberPagination
@@ -90,6 +85,7 @@ class FilmCreateViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.C
 
 
 class FilmRetrieveViewSet(RetrieveUpdateDestroyAPIView):
+    permission_classes = (AllowAny,)
     serializer_class = serializers.FilmRetrieveSerializer
     queryset = Film.objects.all()
     lookup_field = 'filmID'
@@ -99,9 +95,7 @@ class FilmRetrieveViewSet(RetrieveUpdateDestroyAPIView):
 
 
 class VideoViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
-    authentication_classes = (TokenAuthentication,)
-    """ In case we want to make access to this list available to users only. """
-#    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     queryset = Video.objects.all()
     serializer_class = serializers.VideoSerializer
 
@@ -110,3 +104,13 @@ class VideoViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
     
     def perform_create(self, serializer):
         serializer.save()
+
+
+class VideoRetrieveViewSet(RetrieveUpdateDestroyAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = serializers.VideoSerializer
+    queryset = Video.objects.all()
+    lookup_field = 'videoID'
+
+    def get_queryset(self):
+        return self.queryset

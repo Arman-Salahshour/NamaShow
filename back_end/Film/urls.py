@@ -18,5 +18,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('film/<int:filmID>', views.FilmRetrieveViewSet.as_view(), name='retFilm'),
     path('genre/<int:genreID>', views.GenreRetrieveViewSet.as_view(), name='retGenre'),
+    path('video/<int:videoID>', views.VideoRetrieveViewSet.as_view(), name='retVideo'),
     path('celebrity/<int:celebID>', views.CelebrityRetrieveViewSet.as_view(), name='retCeleb'),
 ]

@@ -37,23 +37,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'username'
 
 
-"""
-class User(models.Model):
-    userID = models.AutoField(primary_key=True)
-    username = models.CharField(max_length=100, unique=True, validators=[RegexValidator(regex="^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$")])
-    email= models.EmailField(max_length=100, unique=True,  validators=[EmailValidator()])
-    password = models.TextField()
-    isSuspended = models.BooleanField(default=False)
-    isAdmin = models.BooleanField(default=False)
-    emailActivation = models.BooleanField(default=False)
-    nameOf = models.CharField(max_length=100)
-    balance = models.PositiveIntegerField()
-
-    def __str__(self):
-        return self.username
-"""
-
-
 class Sale(models.Model):
     saleID = models.AutoField(primary_key=True)
     typeOf = models.IntegerField(validators=[MaxValueValidator(6), MinValueValidator(0),])
@@ -97,6 +80,7 @@ class Film(models.Model):
     details = models.TextField()
     salePercentage = models.PositiveIntegerField(default=0)
     saleExpiration = models.DateTimeField(auto_now_add=True)
+    photoDirectory = models.TextField()
     
     filmGenre = models.ManyToManyField(Genre)
     filmActor = models.ManyToManyField(Celebrity, related_name='actor')
@@ -144,26 +128,6 @@ class FilmPurchase(models.Model):
         return f"{self.user}: {self.film}, {self.price}IRR, {self.dateOf}"
 
 
-# class FilmGenre(models.Model):
-#     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
-#     film = models.ForeignKey(Film, on_delete=models.CASCADE)
-
-
-# class FilmActor(models.Model):
-#     celebrity = models.ForeignKey(Celebrity, on_delete=models.CASCADE)
-#     film = models.ForeignKey(Film, on_delete=models.CASCADE)
-
-
-# class FilmDirector(models.Model):
-#     celebrity = models.ForeignKey(Celebrity, on_delete=models.CASCADE)
-#     film = models.ForeignKey(Film, on_delete=models.CASCADE)
-
-
-# class FilmProducer(models.Model):
-#     celebrity = models.ForeignKey(Celebrity, on_delete=models.CASCADE)
-#     film = models.ForeignKey(Film, on_delete=models.CASCADE)
-
-
 class Subscription(models.Model):
     subID = models.AutoField(primary_key=True)
     nameOf = models.CharField(max_length=50)
@@ -187,15 +151,15 @@ class SubPurchase(models.Model):
 
 
 class Payment(models.Model):
-    trackingCode = models.PositiveIntegerField()
+    trackingCode = models.PositiveIntegerField(default=0)
     amount = models.PositiveIntegerField()
     dateOf = models.DateTimeField(auto_now_add=True)
 
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
 
 
-    def __str__(self):
-        return f"{self.userID}: {self.amount}IRR, {self.trackingCode}"
+    # def __str__(self):
+    #     return f"{self.user}: {self.amount}IRR, {self.trackingCode}"
 
 
 class Post(models.Model):

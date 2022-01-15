@@ -1,6 +1,11 @@
-from django.contrib.auth import get_user_model, authenticate
+from attr import fields
+from django.contrib.auth import get_user_model, authenticate, login, logout
+from django.http import request
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token as DefaultTokenModel
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenObtainSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from Core.models import Payment
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -24,29 +29,30 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class AuthTokenSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField(trim_whitespace=False)
+class UserTokenSerializer(TokenObtainSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = RefreshToken.for_user(user)
+        token['userID'] = user.userID
+        token['username'] = user.username
+        token['email'] = user.email
+        token['name'] = user.name
+        token['balance'] = user.balance
+        token['email_activation'] = user.emailActivation
+        return token
 
     def validate(self, attrs):
-        username = attrs.get('username')
-        password = attrs.get('password')
+        data = super().validate(attrs)
 
-        user = authenticate(
-            request=self.context.get('request'),
-            username= username,
-            password= password
-        )
-        if not user:
-            msg = 'Authentication Failed.'
-            raise serializers.ValidationError(msg, code='authentication')
+        refresh = self.get_token(self.user)
 
-        attrs['user'] = user
-        return attrs
+        data['access'] = str(refresh.access_token)
+
+        return data
 
 
-"""class TokenSerializer(serializers.ModelSerializer):   
-    user = UserSerializer()
+class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DefaultTokenModel
-        fields = ('key', 'user',)"""
+        model = Payment
+        fields = ('trackingCode', 'amount',)
+        read_only_fields = ('trackingCode',)
