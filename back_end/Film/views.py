@@ -7,6 +7,8 @@ from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView,
 from rest_framework.pagination import PageNumberPagination
 from Core.models import Celebrity, Genre, Film, Video
 from Film import serializers
+from Core.OMDBcrawler import search_omdb
+
 
 # Create your views here.
 

@@ -5,6 +5,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 
+
 # Create your views here.
 
 

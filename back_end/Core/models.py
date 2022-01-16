@@ -48,7 +48,7 @@ class Sale(models.Model):
 class Celebrity(models.Model):
     celebID = models.AutoField(primary_key=True)
     nameOf = models.CharField(max_length=255)
-    gender = models.BooleanField()
+    gender = models.BooleanField(null=True)
     dateOfBirth = models.DateField(null=True)
     nationality = models.CharField(null=True, max_length=255)
     
@@ -59,7 +59,7 @@ class Celebrity(models.Model):
 class Genre(models.Model):
     genreID = models.AutoField(primary_key=True)
     nameOf = models.CharField(max_length=100, unique=True)
-    details = models.TextField()
+    details = models.TextField(null=True)
     
     def __str__(self):
         return self.nameOf
@@ -69,23 +69,20 @@ class Film(models.Model):
     filmID = models.AutoField(primary_key=True)
     title = models.CharField(max_length=150)
     price = models.PositiveIntegerField()
-    seasons = models.IntegerField(default=1)
     duration = models.PositiveIntegerField()
-    statusOf = models.IntegerField(default=1, validators=[MaxValueValidator(4), MinValueValidator(1),])
-    typeOf = models.IntegerField(validators=[MaxValueValidator(4), MinValueValidator(1),])
+    typeOf = models.IntegerField(validators=[MaxValueValidator(3), MinValueValidator(1),])
     numberOfFilminoRatings = models.PositiveIntegerField(default=0)
-    filminoRating = models.IntegerField(default=0, validators=[MaxValueValidator(10), MinValueValidator(0),])
-    rating = models.IntegerField(default=0, validators=[MaxValueValidator(10), MinValueValidator(0),])
+    filminoRating = models.FloatField(default=0, validators=[MaxValueValidator(10), MinValueValidator(0),])
+    rating = models.FloatField(default=0, validators=[MaxValueValidator(10), MinValueValidator(0),])
     releaseDate = models.DateTimeField(null=True)
     details = models.TextField()
     salePercentage = models.PositiveIntegerField(default=0)
     saleExpiration = models.DateTimeField(auto_now_add=True)
-    photoDirectory = models.TextField()
+    photoDirectory = models.TextField(null=True)
     
     filmGenre = models.ManyToManyField(Genre)
     filmActor = models.ManyToManyField(Celebrity, related_name='actor')
     filmDirector = models.ManyToManyField(Celebrity, related_name='director')
-    filmProducer = models.ManyToManyField(Celebrity, related_name='producer')
 
     def __str__(self):
         return f"{self.title} {self.releaseDate.strftime('%Y')}"
