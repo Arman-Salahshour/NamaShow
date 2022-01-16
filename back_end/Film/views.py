@@ -12,10 +12,11 @@ from Film import serializers
 
 
 class GenreViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
-    queryset = Genre.objects.all()
     serializer_class = serializers.GenreSerializer
-    pagination_class = PageNumberPagination
+    authentication_classes = ()
     permission_classes = (AllowAny,)
+    queryset = Genre.objects.all()
+    pagination_class = PageNumberPagination
 
 
     def get_queryset(self):
@@ -27,6 +28,7 @@ class GenreViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
 
 class GenreRetrieveViewSet(RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.GenreSerializer
+    authentication_classes = ()
     permission_classes = (AllowAny,)
     queryset = Genre.objects.all()
     lookup_field = 'genreID'
@@ -36,6 +38,7 @@ class GenreRetrieveViewSet(RetrieveUpdateDestroyAPIView):
 
 
 class CelebrityViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
+    authentication_classes = ()
     permission_classes = (AllowAny,)
     queryset = Celebrity.objects.all()
     serializer_class = serializers.CelebritySerializer
@@ -49,6 +52,7 @@ class CelebrityViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Cr
 
 
 class CelebrityRetrieveViewSet(RetrieveUpdateDestroyAPIView):
+    authentication_classes = ()
     permission_classes = (AllowAny,)
     serializer_class = serializers.CelebritySerializer
     queryset = Celebrity.objects.all()
@@ -59,6 +63,7 @@ class CelebrityRetrieveViewSet(RetrieveUpdateDestroyAPIView):
 
 
 class FilmViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
+    authentication_classes = ()
     permission_classes = (AllowAny,)
     queryset = Film.objects.all()
     serializer_class = serializers.FilmListSerializer
@@ -72,6 +77,7 @@ class FilmViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateM
 
 
 class FilmCreateViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
+    authentication_classes = ()
     permission_classes = (AllowAny,)
     queryset = Film.objects.none()
     serializer_class = serializers.FilmCreateSerializer
@@ -85,6 +91,7 @@ class FilmCreateViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.C
 
 
 class FilmRetrieveViewSet(RetrieveUpdateDestroyAPIView):
+    authentication_classes = ()
     permission_classes = (AllowAny,)
     serializer_class = serializers.FilmRetrieveSerializer
     queryset = Film.objects.all()
@@ -95,6 +102,7 @@ class FilmRetrieveViewSet(RetrieveUpdateDestroyAPIView):
 
 
 class VideoViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
+    authentication_classes = ()
     permission_classes = (AllowAny,)
     queryset = Video.objects.all()
     serializer_class = serializers.VideoSerializer
@@ -107,6 +115,7 @@ class VideoViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
 
 
 class VideoRetrieveViewSet(RetrieveUpdateDestroyAPIView):
+    authentication_classes = ()
     permission_classes = (AllowAny,)
     serializer_class = serializers.VideoSerializer
     queryset = Video.objects.all()

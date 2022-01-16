@@ -54,5 +54,15 @@ class UserTokenSerializer(TokenObtainSerializer):
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ('trackingCode', 'amount',)
-        read_only_fields = ('trackingCode',)
+        fields = ('user', 'amount',)
+        read_only_fields = ('user',)
+
+    def create(self, validated_data):
+        user = None
+        request = self.context.get("request")
+        user = request.user
+        user.balance = user.balance + int(validated_data['amount'])
+
+        validated_data['user'] = user
+
+        return super().create(validated_data)

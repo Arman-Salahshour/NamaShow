@@ -1,7 +1,6 @@
-
 from rest_framework.views import APIView
 from rest_framework import filters
-from .models import Film
+from Core.models import Film
 from .serializers import FilmSerializer
 from rest_framework.response import Response
 from rest_framework import status
@@ -47,6 +46,7 @@ class PaginationHanlerMixin(object):
 
 
 class SearchFilm(APIView,PaginationHanlerMixin):
+    authentication_classes = ()
     def __init__(self,):
         APIView.__init__(self)
         self.search_class=DynamicSearch

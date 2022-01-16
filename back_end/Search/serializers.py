@@ -1,4 +1,4 @@
-from .models import Film
+from Core.models import Film
 from rest_framework import serializers
 
 class FilmSerializer(serializers.ModelSerializer):
