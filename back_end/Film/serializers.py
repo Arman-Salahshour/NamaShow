@@ -26,8 +26,8 @@ class CelebritySerializer(serializers.ModelSerializer):
 class FilmListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Film
-        fields = ('filmID', 'title', 'rating',)
-        read_only_fields = ('filmID', 'title', 'rating',)
+        fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
+        read_only_fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
 
 
 # Film create view serializer
