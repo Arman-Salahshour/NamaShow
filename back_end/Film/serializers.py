@@ -35,7 +35,7 @@ class FilmCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Film
         fields = '__all__'
-        read_only_fields = ('filmID', 'duration', 'rating', 'releaseDate', 'photoDirectory', 'typeOf', 'salePercentage',
+        read_only_fields = ('filmID', 'duration', 'rating', 'releaseDate', 'posterDirectory', 'posterURL', 'typeOf', 'salePercentage',
                             'filmGenre', 'filmActor', 'filmDirector', 'filminoRating', 'numberOfFilminoRatings')
 
     def create(self, validated_data):
@@ -69,7 +69,8 @@ class FilmCreateSerializer(serializers.ModelSerializer):
 
         #Photo Directory
         if data['Poster']!='N/A':
-            validated_data['photoDirectory'] = data['PosterLoc'].split('\\')[-1]
+            validated_data['posterURL'] = data['Poster']
+            validated_data['posterDirectory'] = data['PosterLoc'].split('\\')[-1]
 
         #Details
         if data['Plot']!='N/A':
@@ -161,8 +162,8 @@ class FilmRetrieveSerializer(serializers.ModelSerializer):
         model = Film
         fields = ('filmID', 'title', 'price', 'duration',
                   'typeOf', 'numberOfFilminoRatings', 'filminoRating',
-                  'rating', 'releaseDate', 'details', 'salePercentage', 'saleExpiration', 'photoDirectory',
-                  'filmGenre', 'filmActor', 'filmDirector', 'videoDetails')
+                  'rating', 'releaseDate', 'details', 'salePercentage', 'saleExpiration', 'posterDirectory',
+                  'posterURL', 'filmGenre', 'filmActor', 'filmDirector', 'videoDetails')
         read_only_fields = ('filmID',)
 
 

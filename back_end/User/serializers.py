@@ -1,5 +1,4 @@
-from attr import fields
-from django.contrib.auth import get_user_model, authenticate, login, logout
+from django.contrib.auth import get_user_model
 from django.http import request
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token as DefaultTokenModel
@@ -28,17 +27,18 @@ class UserSerializer(serializers.ModelSerializer):
 
         return user
 
+class UserInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ('userID', 'username','email', 'name', 'balance', 'emailActivation', 'isSuspended')
+        read_only_fields = ('userID', 'username','email', 'name', 'balance', 'emailActivation', 'isSuspended')
+
 
 class UserTokenSerializer(TokenObtainSerializer):
     @classmethod
     def get_token(cls, user):
         token = RefreshToken.for_user(user)
         token['userID'] = user.userID
-        token['username'] = user.username
-        token['email'] = user.email
-        token['name'] = user.name
-        token['balance'] = user.balance
-        token['email_activation'] = user.emailActivation
         return token
 
     def validate(self, attrs):
@@ -58,11 +58,14 @@ class PaymentSerializer(serializers.ModelSerializer):
         read_only_fields = ('user',)
 
     def create(self, validated_data):
-        user = None
         request = self.context.get("request")
         user = request.user
-        user.balance = user.balance + int(validated_data['amount'])
-
+        uID = getattr(user,'userID')
+        uBalance = getattr(user, 'balance')
+        amount = int(validated_data['amount'])
+        uBalance = uBalance + amount
+        get_user_model().objects.filter(userID=uID).update(balance=uBalance)
         validated_data['user'] = user
+        
 
         return super().create(validated_data)

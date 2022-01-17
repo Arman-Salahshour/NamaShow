@@ -78,7 +78,9 @@ class Film(models.Model):
     details = models.TextField()
     salePercentage = models.PositiveIntegerField(default=0)
     saleExpiration = models.DateTimeField(auto_now_add=True)
-    photoDirectory = models.TextField(null=True)
+    posterDirectory = models.TextField(null=True)
+    posterURL = models.TextField(null=True)
+
     
     filmGenre = models.ManyToManyField(Genre)
     filmActor = models.ManyToManyField(Celebrity, related_name='actor')

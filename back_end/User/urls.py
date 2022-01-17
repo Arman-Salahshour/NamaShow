@@ -9,4 +9,5 @@ urlpatterns = [
     path('token/', views.UserTokenView.as_view(), name='token'),
     path('update/', views.ManageUserView.as_view(), name='update'),
     path('pay/', views.PaymentView.as_view(), name='pay'),
+    path('info/', views.UserInfoViewSet.as_view({'get': 'list'}), name='info'),
 ]
