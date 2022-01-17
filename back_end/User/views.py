@@ -28,6 +28,10 @@ class UserInfoViewSet(viewsets.ModelViewSet):
     queryset = get_user_model().objects.all()
     serializer_class = UserInfoSerializer
 
+    def get_queryset(self):
+        uID = getattr(self.request.user,'userID')
+        return get_user_model().objects.filter(userID=uID)
+
     def get_object(self):
         uID = getattr(self.request.user,'userID')
         return self.queryset.filter(userID=uID)
