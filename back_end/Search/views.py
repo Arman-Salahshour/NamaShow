@@ -5,6 +5,7 @@ from .serializers import FilmSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny
 
 
 
@@ -47,6 +48,7 @@ class PaginationHanlerMixin(object):
 
 class SearchFilm(APIView,PaginationHanlerMixin):
     authentication_classes = ()
+    permission_classes = (AllowAny,)
     def __init__(self,):
         APIView.__init__(self)
         self.search_class=DynamicSearch

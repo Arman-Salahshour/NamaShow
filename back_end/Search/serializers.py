@@ -14,7 +14,7 @@ class FilmSerializer(serializers.ModelSerializer):
             "filminoRating",
             "rating",
             "releaseDate",
-            "details",
+            "detailsEn",
             "salePercentage",
             "saleExpiration",
         ]
