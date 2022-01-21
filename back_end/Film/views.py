@@ -29,7 +29,7 @@ class GenreViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
 
 
 class GenreRetrieveViewSet(RetrieveUpdateDestroyAPIView):
-    serializer_class = serializers.GenreSerializer
+    serializer_class = serializers.GenreRetrieveSerializer
     authentication_classes = ()
     permission_classes = (AllowAny,)
     queryset = Genre.objects.all()
@@ -56,7 +56,7 @@ class CelebrityViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Cr
 class CelebrityRetrieveViewSet(RetrieveUpdateDestroyAPIView):
     authentication_classes = ()
     permission_classes = (AllowAny,)
-    serializer_class = serializers.CelebritySerializer
+    serializer_class = serializers.CelebrityRetrieveSerializer
     queryset = Celebrity.objects.all()
     lookup_field = 'celebID'
 

@@ -1,3 +1,4 @@
+from pyexpat import model
 from isodate import duration_isoformat
 from rest_framework import serializers
 from Core.models import Celebrity, Genre, Film, Video
@@ -13,12 +14,40 @@ class GenreSerializer(serializers.ModelSerializer):
         read_only_fields = ('genreID',)
 
 
+# Genre Retrieve Serializer
+class GenreRetrieveSerializer(serializers.ModelSerializer):
+    class GenreFilmSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Film
+            fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
+            read_only_fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
+    
+    film_set = GenreFilmSerializer(read_only=True, many=True,)
+    class Meta:
+        model = Genre
+        fields = '__all__'
+
+
 # Celebrity serializer
 class CelebritySerializer(serializers.ModelSerializer):
     class Meta:
         model = Celebrity
         fields = ('celebID', 'nameOf', 'gender', 'dateOfBirth', 'nationality')
         read_only_fields = ('celebID',)
+
+
+# Celebrity Retrieve Serializer
+class CelebrityRetrieveSerializer(serializers.ModelSerializer):
+    class ActorFilmSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Film
+            fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL', 'filmActor')
+            read_only_fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
+    
+    film_set = ActorFilmSerializer(read_only=True, many=True,)
+    class Meta:
+        model = Celebrity
+        fields = '__all__'
 
 
 # Film
