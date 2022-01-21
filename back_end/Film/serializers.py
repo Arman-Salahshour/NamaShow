@@ -36,7 +36,7 @@ class FilmCreateSerializer(serializers.ModelSerializer):
         model = Film
         fields = '__all__'
         read_only_fields = ('filmID', 'duration', 'rating', 'releaseDate', 'posterDirectory', 'posterURL', 'typeOf', 'salePercentage',
-                            'filmGenre', 'filmActor', 'filmDirector', 'filminoRating', 'numberOfFilminoRatings')
+                            'filmGenre', 'filmActor', 'filmDirector', 'filminoRating', 'numberOfFilminoRatings', 'detailsEn')
 
     def create(self, validated_data):
         title = validated_data['title']
@@ -74,7 +74,7 @@ class FilmCreateSerializer(serializers.ModelSerializer):
 
         #Details
         if data['Plot']!='N/A':
-            validated_data['details'] = 'English:\n' + data['Plot'] + '\nPersian:\n' + validated_data['details']  
+            validated_data['detailsEn'] = data['Plot'] 
 
         #Type
         if data['Type']!='N/A':

@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import generics, viewsets, mixins
 from Core.models import Payment
-from User.serializers import UserInfoSerializer, UserSerializer, UserTokenSerializer, PaymentSerializer
+from User.serializers import UserInfoSerializer, UserSerializer, UserTokenSerializer, PaymentSerializer, UserUpdateSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions
 
@@ -19,7 +19,7 @@ class UserTokenView(TokenObtainPairView):
 
     
 class ManageUserView(generics.UpdateAPIView):
-    serializer_class = UserSerializer
+    serializer_class = UserUpdateSerializer
 
     def get_object(self):
         return self.request.user
