@@ -1,10 +1,9 @@
 from django.contrib.auth import get_user_model
-from django.http import request
 from rest_framework import serializers
-from rest_framework.authtoken.models import Token as DefaultTokenModel
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenObtainSerializer
+from rest_framework_simplejwt.serializers import TokenObtainSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from Core.models import Payment
+from Core.models import Film, Payment, Subscription
+import datetime
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -47,12 +46,30 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         return user
 
 
+class SubscriptionSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Subscription
+            fields = ('nameOf', 'subID',)
+
 
 class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ('userID', 'username','email', 'name', 'balance', 'emailActivation', 'isSuspended')
         read_only_fields = ('userID', 'username','email', 'name', 'balance', 'emailActivation', 'isSuspended')
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        latestSub = instance.subpurchase_set.order_by('dateOf').last()
+        currentSub = getattr(latestSub, 'subscription')
+        currentSub = SubscriptionSerializer(instance=currentSub).data
+        expDate = getattr(latestSub, 'dateOf') + datetime.timedelta(days=30)
+        if(datetime.datetime.now() < expDate):
+            currentSub['expiration_date'] = expDate
+            data['current_subscription'] = currentSub
+        else:
+            data['current_subscription'] = 'none'
+        return data
 
 
 class UserTokenSerializer(TokenObtainSerializer):
@@ -88,5 +105,4 @@ class PaymentSerializer(serializers.ModelSerializer):
         get_user_model().objects.filter(userID=uID).update(balance=uBalance)
         validated_data['user'] = user
         
-
         return super().create(validated_data)

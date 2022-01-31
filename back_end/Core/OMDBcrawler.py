@@ -19,14 +19,14 @@ def print_json(json_data):
 
 def save_poster(json_data):
     import os
-    title = json_data['Title'] + ' ' + json_data['Year']
+    title = json_data['Title'] + ' ' + json_data['Year'][:4]
     poster_url = json_data['Poster']
     # Splits the poster url by '.' and picks up the last string as file extension
     poster_file_extension=poster_url.split('.')[-1]
     # Reads the image file from web
     poster_data = urllib.request.urlopen(poster_url).read()
         
-    savelocation=os.getcwd()+'\\'+ 'Core' + '\\' + 'Posters'+'\\'
+    savelocation=os.getcwd()+'/'+ 'Core' + '/' + 'Posters'+'/'
     # Creates new directory if the directory does not exist. Otherwise, just use the existing path.
     if not os.path.isdir(savelocation):
         os.mkdir(savelocation)

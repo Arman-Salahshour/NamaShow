@@ -17,4 +17,6 @@ class FilmSerializer(serializers.ModelSerializer):
             "detailsEn",
             "salePercentage",
             "saleExpiration",
+            "posterURL",
+            "posterDirectory",
         ]

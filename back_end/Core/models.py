@@ -1,40 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.validators import EmailValidator, RegexValidator, MaxValueValidator, MinValueValidator
-
+import datetime
 # Create your models here.
-
-
-class UserManager(BaseUserManager):
-    def createUser(self, email, password=None, **extra_fields):
-        if not email:
-            raise ValueError('Email Not Found!!!')
-        user = self.model(email=self.normalize_email(email), **extra_fields)
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def createSuperUser(self, email, password):
-        user = self.createUser(email, password)
-        user.isAdmin = True
-        user.isSuperUser = True
-        user.save(using=self._db)
-        return user
-
-
-class User(AbstractBaseUser, PermissionsMixin):
-    userID = models.AutoField(primary_key=True)
-    username = models.CharField(max_length=100, unique=True, validators=[RegexValidator(regex="^(?=[a-z0-9._]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$")])
-    email= models.EmailField(max_length=100, unique=True,  validators=[EmailValidator()])
-    name = models.CharField(max_length=100)
-    isSuspended = models.BooleanField(default=False)
-    isAdmin = models.BooleanField(default=False)
-    emailActivation = models.BooleanField(default=False)
-    balance = models.IntegerField(default=0)
-
-    objects = UserManager()
-
-    USERNAME_FIELD = 'username'
 
 
 class Sale(models.Model):
@@ -78,17 +46,51 @@ class Film(models.Model):
     detailsEn = models.TextField()
     detailsFa = models.TextField()
     salePercentage = models.PositiveIntegerField(default=0)
-    saleExpiration = models.DateTimeField(auto_now_add=True)
+    saleExpiration = models.DateTimeField(default=datetime.datetime.now, blank=True)
     posterDirectory = models.TextField(null=True)
     posterURL = models.TextField(null=True)
 
     
     filmGenre = models.ManyToManyField(Genre)
-    filmActor = models.ManyToManyField(Celebrity, related_name='actor')
-    filmDirector = models.ManyToManyField(Celebrity, related_name='director')
+    filmActor = models.ManyToManyField(Celebrity, related_name='film_actor')
+    filmDirector = models.ManyToManyField(Celebrity, related_name='film_director')
 
     def __str__(self):
         return f"{self.title} {self.releaseDate.strftime('%Y')}"
+
+
+class UserManager(BaseUserManager):
+    def createUser(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('Email Not Found!!!')
+        user = self.model(email=self.normalize_email(email), **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def createSuperUser(self, email, password):
+        user = self.createUser(email, password)
+        user.isAdmin = True
+        user.isSuperUser = True
+        user.save(using=self._db)
+        return user
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+    userID = models.AutoField(primary_key=True)
+    username = models.CharField(max_length=100, unique=True, validators=[RegexValidator(regex="^(?=[a-z0-9._]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$")])
+    email= models.EmailField(max_length=100, unique=True,  validators=[EmailValidator()])
+    name = models.CharField(max_length=100)
+    isSuspended = models.BooleanField(default=False)
+    isAdmin = models.BooleanField(default=False)
+    emailActivation = models.BooleanField(default=False)
+    balance = models.IntegerField(default=0)
+
+    watchList = models.ManyToManyField(Film)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'username'
 
 
 class Video(models.Model):
@@ -133,10 +135,10 @@ class Subscription(models.Model):
     nameOf = models.CharField(max_length=50)
     price = models.PositiveIntegerField()
     salePercentage = models.PositiveIntegerField(default=0)
-    saleExpiration = models.DateTimeField(auto_now_add=True)
+    saleExpiration = models.DateTimeField(default=datetime.datetime.now, blank=True)
 
     def __str__(self):
-        return f"{self.nameOf}: {self.price}IRR"
+        return f"{self.nameOf}"
 
 
 class SubPurchase(models.Model):
@@ -147,7 +149,7 @@ class SubPurchase(models.Model):
     subscription = models.ForeignKey(Subscription, null=True, on_delete=models.SET_NULL)
     
     def __str__(self):
-        return self.subscription
+        return self.subscription.__str__()
 
 
 class Payment(models.Model):

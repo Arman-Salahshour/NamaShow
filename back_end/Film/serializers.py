@@ -1,5 +1,4 @@
-from pyexpat import model
-from isodate import duration_isoformat
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from Core.models import Celebrity, Genre, Film, Video
 from Core.OMDBcrawler import search_omdb
@@ -38,13 +37,14 @@ class CelebritySerializer(serializers.ModelSerializer):
 
 # Celebrity Retrieve Serializer
 class CelebrityRetrieveSerializer(serializers.ModelSerializer):
-    class ActorFilmSerializer(serializers.ModelSerializer):
+    class FilmSerializer(serializers.ModelSerializer):
         class Meta:
             model = Film
-            fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL', 'filmActor')
+            fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL',)
             read_only_fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
     
-    film_set = ActorFilmSerializer(read_only=True, many=True,)
+    film_actor = FilmSerializer(read_only=True, many=True,)
+    film_director = FilmSerializer(read_only=True, many=True,)
     class Meta:
         model = Celebrity
         fields = '__all__'
@@ -75,7 +75,7 @@ class FilmCreateSerializer(serializers.ModelSerializer):
             raise BaseException('Can not find this film in the database')
 
         #Title
-        validated_data['title'] = data['Title'] + ' ' + data['Year']
+        validated_data['title'] = data['Title'] + ' ' + data['Year'][:4]
         
         #Release Date
         dateString = data['Released'] + ' 12:00 AM'
@@ -159,23 +159,23 @@ class FilmRetrieveSerializer(serializers.ModelSerializer):
     class GenreFilmSerializer(serializers.ModelSerializer):
         class Meta:
             model = Genre
-            fields = ('nameOf',)
-            read_only_fields = ('nameOf',)
+            fields = ('nameOf', 'genreID',)
+            read_only_fields = ('nameOf', 'genreID',)
         
         def to_representation(self, instance):
             ret = super().to_representation(instance)
-            ret = ret['nameOf'] 
+            ret = {'name': ret['nameOf'], 'id': ret['genreID']}
             return ret
 
     class CelebrityFilmSerializer(serializers.ModelSerializer):
         class Meta:
             model = Celebrity
-            fields = ('nameOf',)
-            read_only_fields = ('nameOf',)
+            fields = ('nameOf', 'celebID',)
+            read_only_fields = ('nameOf', 'celebID',)
         
         def to_representation(self, instance):
             ret = super().to_representation(instance)
-            ret = ret['nameOf'] 
+            ret = {'name': ret['nameOf'], 'id': ret['celebID']}
             return ret
 
     class VideoFilmSerializer(serializers.ModelSerializer):
@@ -191,7 +191,7 @@ class FilmRetrieveSerializer(serializers.ModelSerializer):
         model = Film
         fields = ('filmID', 'title', 'price', 'duration',
                   'typeOf', 'numberOfFilminoRatings', 'filminoRating',
-                  'rating', 'releaseDate', 'details', 'salePercentage', 'saleExpiration', 'posterDirectory',
+                  'rating', 'releaseDate', 'detailsEn', 'detailsFa', 'salePercentage', 'saleExpiration', 'posterDirectory',
                   'posterURL', 'filmGenre', 'filmActor', 'filmDirector', 'videoDetails')
         read_only_fields = ('filmID',)
 
@@ -203,3 +203,17 @@ class VideoSerializer(serializers.ModelSerializer):
         fields = ('videoID', 'film', 'duration', 'qualityHeight', 'qualityWidth', 'sizeOf',
                   'episode', 'season', 'encoder', 'directoryLocation')
         read_only_fields = ('videoID',)
+
+
+class WatchListSerializer(serializers.ModelSerializer):
+    class FilmSerializer(serializers.ModelSerializer):
+        model = Film
+        fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
+        read_only_fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
+
+    film_set = FilmSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = ('userID', 'film_set')
+        read_only_fields = ('userID', 'film_set')

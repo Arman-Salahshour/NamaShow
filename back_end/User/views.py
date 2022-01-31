@@ -1,17 +1,17 @@
 from django.contrib.auth import get_user_model
-from rest_framework import generics, viewsets, mixins
+from rest_framework.permissions import AllowAny
+from rest_framework import generics, viewsets
 from Core.models import Payment
-from User.serializers import UserInfoSerializer, UserSerializer, UserTokenSerializer, PaymentSerializer, UserUpdateSerializer
+from User.serializers import UserInfoSerializer, UserSerializer, UserTokenSerializer \
+                           , PaymentSerializer, UserUpdateSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework import permissions
-
 
 # Create your views here.
 
 
 class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (AllowAny,)
     authentication_classes = ()
 
 class UserTokenView(TokenObtainPairView):
@@ -41,5 +41,3 @@ class PaymentView(generics.CreateAPIView):
 
     def get_queryset(self):
         return Payment.objects.all()
-
-    
