@@ -61,6 +61,9 @@ class UserInfoSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         latestSub = instance.subpurchase_set.order_by('dateOf').last()
+        if(not latestSub):
+            data['current_subscription'] = 'none'
+            return data
         currentSub = getattr(latestSub, 'subscription')
         currentSub = SubscriptionSerializer(instance=currentSub).data
         expDate = getattr(latestSub, 'dateOf') + datetime.timedelta(days=30)
