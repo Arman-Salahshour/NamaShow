@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
+from django.forms import ValidationError
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from Core.models import Film, Payment, Subscription
+from Core.models import Film, FilmPurchase, Payment, Subscription
 import datetime
 
 
@@ -109,3 +110,24 @@ class PaymentSerializer(serializers.ModelSerializer):
         validated_data['user'] = user
         
         return super().create(validated_data)
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = ('__all__')
+        read_only_fields = ('subID', 'salePercentage', 'saleExpiration')
+
+
+class SubscriptionRetrieveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = ('__all__')
+        read_only_fields = ('subID',)
+
+
+class FilmPurchaseListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FilmPurchase
+        fields = ('user', 'film', 'price','dateOf')
+        read_only_fields = ('user', 'film', 'price', 'dateOf')

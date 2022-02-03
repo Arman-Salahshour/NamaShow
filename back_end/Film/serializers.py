@@ -1,8 +1,10 @@
 from django.contrib.auth import get_user_model
+from django.forms import ValidationError
 from rest_framework import serializers
-from Core.models import Celebrity, Genre, Film, Video
+from Core.models import Celebrity, FilmPurchase, Genre, Film, Video
 from Core.OMDBcrawler import search_omdb
 from datetime import datetime
+from django.contrib.auth.models import AnonymousUser
 
 
 # Genre serializer
@@ -154,7 +156,7 @@ class FilmCreateSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-# Film retrieve view serializer
+# Film retrieve serializer
 class FilmRetrieveSerializer(serializers.ModelSerializer):
     class GenreFilmSerializer(serializers.ModelSerializer):
         class Meta:
@@ -195,6 +197,19 @@ class FilmRetrieveSerializer(serializers.ModelSerializer):
                   'posterURL', 'filmGenre', 'filmActor', 'filmDirector', 'videoDetails')
         read_only_fields = ('filmID',)
 
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        ret['user_purchased'] = False
+        fID = ret['filmID']
+        film = Film.objects.filter(filmID=fID).first()
+        request = self.context.get("request")
+        user = request.user
+        if(type(user) == AnonymousUser):
+            return ret
+        if(FilmPurchase.objects.filter(user=user).filter(film=film).first()):
+            ret['user_purchased'] = True
+        return ret
+
 
 # Video Serializer
 class VideoSerializer(serializers.ModelSerializer):
@@ -205,15 +220,30 @@ class VideoSerializer(serializers.ModelSerializer):
         read_only_fields = ('videoID',)
 
 
-class WatchListSerializer(serializers.ModelSerializer):
-    class FilmSerializer(serializers.ModelSerializer):
-        model = Film
-        fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
-        read_only_fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
-
-    film_set = FilmSerializer(read_only=True, many=True)
-
+class FilmPurchaseSerializer(serializers.ModelSerializer):
     class Meta:
-        model = get_user_model()
-        fields = ('userID', 'film_set')
-        read_only_fields = ('userID', 'film_set')
+        model = FilmPurchase
+        fields = ('user', 'film', 'price','dateOf')
+        read_only_fields = ('user', 'price', 'dateOf')
+
+    def create(self, validated_data):
+        validated_data['dateOf'] = datetime.now()
+
+        request = self.context.get("request")
+        user = request.user
+        validated_data['user'] = user
+        uID = getattr(user,'userID')
+
+        film = validated_data['film']
+        if(FilmPurchase.objects.filter(user=user).filter(film=film).first()):
+            raise ValidationError('Already Own This Film.', code='repurchase')
+
+        price = int(getattr(film,'price'))
+        validated_data['price'] = price
+        balance = int(getattr(user, 'balance'))
+        if(price>balance):
+            raise ValidationError('Not enough balance.', code='low_balance')
+        balance = balance - price
+        get_user_model().objects.filter(userID=uID).update(balance=balance)        
+
+        return super().create(validated_data)

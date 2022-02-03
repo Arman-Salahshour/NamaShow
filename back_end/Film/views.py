@@ -1,10 +1,9 @@
-from rest_framework import viewsets, mixins
+from rest_framework import viewsets, mixins, generics
 from rest_framework.permissions import AllowAny
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, UpdateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.pagination import PageNumberPagination
-from Core.models import Celebrity, Genre, Film, Video
+from Core.models import Celebrity, FilmPurchase, Genre, Film, Video
 from Film import serializers
-from Core.OMDBcrawler import search_omdb
 
 
 # Create your views here.
@@ -90,7 +89,7 @@ class FilmCreateViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.C
 
 
 class FilmRetrieveViewSet(RetrieveUpdateDestroyAPIView):
-    authentication_classes = ()
+    # authentication_classes = ()
     permission_classes = (AllowAny,)
     serializer_class = serializers.FilmRetrieveSerializer
     queryset = Film.objects.all()
@@ -124,5 +123,8 @@ class VideoRetrieveViewSet(RetrieveUpdateDestroyAPIView):
         return self.queryset
 
 
-class WatchListAddView(UpdateAPIView):
-    pass
+class FilmPurchaseView(generics.CreateAPIView):
+    serializer_class = serializers.FilmPurchaseSerializer
+
+    def get_queryset(self):
+        return FilmPurchase.objects.all()

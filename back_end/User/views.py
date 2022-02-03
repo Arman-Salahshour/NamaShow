@@ -1,14 +1,11 @@
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import AllowAny
 from rest_framework import generics, viewsets
-from rest_framework.generics import RetrieveAPIView
-from Core.models import Payment, Film
+from Core.models import FilmPurchase, Payment
 from User.serializers import UserInfoSerializer, UserSerializer, UserTokenSerializer \
-                           , PaymentSerializer, UserUpdateSerializer, FilmListSerializer
+                           , PaymentSerializer, UserUpdateSerializer, FilmPurchaseListSerializer \
+                           , WatchListAddSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from django.shortcuts import get_object_or_404
-from rest_framework.decorators import action
-from rest_framework.response import Response
 
 # Create your views here.
 
@@ -45,4 +42,3 @@ class PaymentView(generics.CreateAPIView):
 
     def get_queryset(self):
         return Payment.objects.all()
-
