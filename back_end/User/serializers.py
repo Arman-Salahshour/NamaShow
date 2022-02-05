@@ -136,7 +136,15 @@ class SubscriptionRetrieveSerializer(serializers.ModelSerializer):
 
 # User films' list
 class MyFilmsSerializer(serializers.ModelSerializer):
+    class FilmListSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Film
+            fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
+            read_only_fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
+
+    film_set = FilmListSerializer(read_only=True, many=True)
+
     class Meta:
-        model = Film
-        fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
-        read_only_fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
+        model = FilmPurchase
+        fields = ()
+        read_only_fields = ()
