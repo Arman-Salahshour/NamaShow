@@ -7,6 +7,7 @@ from Core.models import Film, FilmPurchase, Payment, Subscription
 import datetime
 
 
+# User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
@@ -28,6 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
+# Update user
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
@@ -47,12 +49,14 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         return user
 
 
+# Subscription
 class SubscriptionSerializer(serializers.ModelSerializer):
         class Meta:
             model = Subscription
             fields = ('nameOf', 'subID',)
 
 
+# User information
 class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
@@ -76,6 +80,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
         return data
 
 
+# User login
 class UserTokenSerializer(TokenObtainSerializer):
     @classmethod
     def get_token(cls, user):
@@ -93,6 +98,7 @@ class UserTokenSerializer(TokenObtainSerializer):
         return data
 
 
+# Payment
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
@@ -112,6 +118,7 @@ class PaymentSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
+# Subscription
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
@@ -119,6 +126,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         read_only_fields = ('subID', 'salePercentage', 'saleExpiration')
 
 
+# Subscription retrieve
 class SubscriptionRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
@@ -126,8 +134,9 @@ class SubscriptionRetrieveSerializer(serializers.ModelSerializer):
         read_only_fields = ('subID',)
 
 
-class FilmPurchaseListSerializer(serializers.ModelSerializer):
+# User films' list
+class MyFilmsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = FilmPurchase
-        fields = ('user', 'film', 'price','dateOf')
-        read_only_fields = ('user', 'film', 'price', 'dateOf')
+        model = Film
+        fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
+        read_only_fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')

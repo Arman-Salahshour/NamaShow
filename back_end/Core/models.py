@@ -78,7 +78,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     userID = models.AutoField(primary_key=True)
-    username = models.CharField(max_length=100, unique=True, validators=[RegexValidator(regex="^(?=[a-z0-9._]{5,20}$)(?!.*[_.]{2})[^_.].*[^_.]$")])
+    username = models.CharField(max_length=100, unique=True, validators=[RegexValidator(regex="^(?=[a-z0-9._]{5,100}$)(?!.*[_.]{2})[^_.].*[^_.]$")])
     email= models.EmailField(max_length=100, unique=True,  validators=[EmailValidator()])
     name = models.CharField(max_length=100)
     isSuspended = models.BooleanField(default=False)
@@ -158,10 +158,6 @@ class Payment(models.Model):
     dateOf = models.DateTimeField(auto_now_add=True)
 
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
-
-
-    # def __str__(self):
-    #     return f"{self.user}: {self.amount}IRR, {self.trackingCode}"
 
 
 class Post(models.Model):

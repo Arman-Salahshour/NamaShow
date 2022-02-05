@@ -34,11 +34,12 @@ class SubPurchaseSerializer(serializers.ModelSerializer):
         uID = getattr(user,'userID')
         
         latestSub = SubPurchase.objects.filter(user=user).order_by('dateOf').last()
-        latestDate = getattr(latestSub, 'dateOf')
-        expDate = latestDate + datetime.timedelta(days=30)
-        print(datetime.datetime.now())
-        if(datetime.datetime.now() < expDate):
-            raise ValidationError('Already have a subscription.', code='already-subbed')
+        if(latestSub):
+            latestDate = getattr(latestSub, 'dateOf')
+            expDate = latestDate + datetime.timedelta(days=30)
+            print(datetime.datetime.now())
+            if(datetime.datetime.now() < expDate):
+                raise ValidationError('Already have a subscription.', code='already-subbed')
 
         subscription = validated_data['subscription']
         price = int(getattr(subscription,'price'))

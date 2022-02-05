@@ -220,6 +220,7 @@ class VideoSerializer(serializers.ModelSerializer):
         read_only_fields = ('videoID',)
 
 
+# FilmPurchase serializer
 class FilmPurchaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = FilmPurchase
