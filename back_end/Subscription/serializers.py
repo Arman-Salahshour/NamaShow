@@ -42,8 +42,10 @@ class SubPurchaseSerializer(serializers.ModelSerializer):
                 raise ValidationError('Already have a subscription.', code='already-subbed')
 
         subscription = validated_data['subscription']
+
         price = int(getattr(subscription,'price'))
         validated_data['price'] = price
+        
         balance = int(getattr(user, 'balance'))
         if(price>balance):
             raise ValidationError('Not enough balance.', code='low_balance')

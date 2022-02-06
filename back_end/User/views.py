@@ -3,7 +3,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework import generics, viewsets
 from Core.models import Film, FilmPurchase, Payment
 from User.serializers import UserInfoSerializer, UserSerializer, UserTokenSerializer \
-                           , PaymentSerializer, UserUpdateSerializer, FilmPurchaseListSerializer
+                           , PaymentSerializer, UserUpdateSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 # Create your views here.
@@ -52,9 +52,9 @@ class PaymentView(generics.CreateAPIView):
 
 
 # User films' List
-class FilmPurchaseListView(generics.ListAPIView):
-    serializer_class = FilmPurchaseListSerializer
+# class FilmPurchaseListView(generics.ListAPIView):
+#     serializer_class = FilmPurchaseListSerializer
 
-    def get_queryset(self):
-        user = self.request.user
-        return Film.objects.filter()
+#     def get_queryset(self):
+#         user = self.request.user
+#         return Film.objects.filter()

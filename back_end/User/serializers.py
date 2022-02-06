@@ -118,28 +118,12 @@ class PaymentSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-# Subscription
-class SubscriptionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Subscription
-        fields = ('__all__')
-        read_only_fields = ('subID', 'salePercentage', 'saleExpiration')
-
-
-# Subscription retrieve
-class SubscriptionRetrieveSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Subscription
-        fields = ('__all__')
-        read_only_fields = ('subID',)
-
-
 # User films' list
 class MyFilmsSerializer(serializers.ModelSerializer):
     class FilmListSerializer(serializers.ModelSerializer):
         class Meta:
-            model = Film
-            fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
+            model = FilmPurchase
+            fields = ('film', 'title', 'rating', 'posterDirectory', 'posterURL')
             read_only_fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
 
     film_set = FilmListSerializer(read_only=True, many=True)
