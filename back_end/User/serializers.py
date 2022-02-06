@@ -120,15 +120,39 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 # User films' list
 class MyFilmsSerializer(serializers.ModelSerializer):
-    class FilmListSerializer(serializers.ModelSerializer):
+    class FilmPurchaseListSerializer(serializers.ModelSerializer):
+        class FilmSerializer(serializers.ModelSerializer):
+            class Meta:
+                model = Film
+                fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
+                read_only_fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
+            
+        film = FilmSerializer(read_only=True)
+
         class Meta:
             model = FilmPurchase
-            fields = ('film', 'title', 'rating', 'posterDirectory', 'posterURL')
-            read_only_fields = ('filmID', 'title', 'rating', 'posterDirectory', 'posterURL')
+            fields = ('film', 'dateOf', 'price')
+            read_only_fields = ('film', 'dateOf', 'price')
 
-    film_set = FilmListSerializer(read_only=True, many=True)
+        def to_representation(self, instance):
+            data = super().to_representation(instance)
+            data['filmID'] = data['film']['filmID']
+            data['title'] = data['film']['title']
+            data['rating'] = data['film']['rating']
+            data['posterDirectory'] = data['film']['posterDirectory']
+            data['posterURL'] = data['film']['posterURL']
+            data.pop('film')
+            return data
+
+    filmpurchase_set = FilmPurchaseListSerializer(read_only=True, many=True)
 
     class Meta:
-        model = FilmPurchase
-        fields = ()
-        read_only_fields = ()
+        model = get_user_model()
+        fields = ('filmpurchase_set',)
+        read_only_fields = ('filmpurchase_set',)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['my-films'] = data['filmpurchase_set']
+        data.pop('filmpurchase_set')
+        return data

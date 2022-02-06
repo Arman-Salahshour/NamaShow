@@ -9,5 +9,5 @@ urlpatterns = [
     path('update/', views.ManageUserView.as_view(), name='update'),
     path('pay/', views.PaymentView.as_view(), name='pay'),
     path('info/', views.UserInfoViewSet.as_view({'get': 'list'}), name='info'),
-    # path('films/', views.FilmPurchaseListView.as_view(), name='userFilms'),
+    path('films/', views.MyFilmsViewset.as_view({'get': 'list'}), name='userFilms'),
 ]
