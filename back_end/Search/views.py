@@ -1,11 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework import filters
 from Core.models import Film
-from .serializers import FilmSerializer
+from Search.serializers import FilmSerializer
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny
 
 
 
@@ -49,6 +49,7 @@ class PaginationHanlerMixin(object):
 class SearchFilm(APIView,PaginationHanlerMixin):
     authentication_classes = ()
     permission_classes = (AllowAny,)
+
     def __init__(self,):
         APIView.__init__(self)
         self.search_class=DynamicSearch
@@ -58,10 +59,22 @@ class SearchFilm(APIView,PaginationHanlerMixin):
       filterd_queryset=self.search_class().filter_queryset(self.request,queryset,self)
       return filterd_queryset
 
+    def order_list(self,queryset,param):
+        field=param.split('_')[0]
+        sorting=param.split('_')[1]
+        if sorting=='asc':
+            return queryset.order_by(field)
+        elif sorting=='desc':
+            return queryset.order_by(field).reverse()
+        
 
     def get(self, request):
         films= Film.objects.all()
         filtered_queryset=self.filter_queryset(films)
+        order_field=request.query_params.get('order_by',None)
+        if order_field is not None:
+            filtered_queryset=self.order_list(filtered_queryset,order_field) 
+
         #Get appropriate results for each page
         results=self.paginate_queryset(filtered_queryset)
         if(results is not None):

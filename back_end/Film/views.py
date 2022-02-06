@@ -1,6 +1,5 @@
 from rest_framework import viewsets, mixins, generics
 from rest_framework.permissions import AllowAny
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.pagination import PageNumberPagination
 from Core.models import Celebrity, FilmPurchase, Genre, Film, Video
 from Film import serializers
@@ -16,7 +15,6 @@ class GenreViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
     queryset = Genre.objects.all()
     pagination_class = PageNumberPagination
 
-
     def get_queryset(self):
         return self.queryset
     
@@ -25,7 +23,7 @@ class GenreViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
 
 
 # Genre Retrieve
-class GenreRetrieveViewSet(RetrieveUpdateDestroyAPIView):
+class GenreRetrieveViewSet(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.GenreRetrieveSerializer
     authentication_classes = ()
     permission_classes = (AllowAny,)
@@ -50,7 +48,7 @@ class CelebrityViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Cr
         serializer.save()
 
 # Celebrity Retrieve
-class CelebrityRetrieveViewSet(RetrieveUpdateDestroyAPIView):
+class CelebrityRetrieveViewSet(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = ()
     permission_classes = (AllowAny,)
     serializer_class = serializers.CelebrityRetrieveSerializer
@@ -92,7 +90,7 @@ class FilmCreateViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.C
 
 
 # Film Retrieve
-class FilmRetrieveViewSet(RetrieveUpdateDestroyAPIView):
+class FilmRetrieveViewSet(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (AllowAny,)
     serializer_class = serializers.FilmRetrieveSerializer
     queryset = Film.objects.all()
@@ -117,7 +115,7 @@ class VideoViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Create
 
 
 # Video Retrieve
-class VideoRetrieveViewSet(RetrieveUpdateDestroyAPIView):
+class VideoRetrieveViewSet(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = ()
     permission_classes = (AllowAny,)
     serializer_class = serializers.VideoSerializer

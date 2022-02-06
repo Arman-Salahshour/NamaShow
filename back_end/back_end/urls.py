@@ -7,5 +7,6 @@ urlpatterns = [
     path('api/user/', include('User.urls')),
     path('api/film/', include('Film.urls')),
     path('api/search/', include('Search.urls')),
-    path('api/subscription/', include('Subscription.urls'))
+    path('api/post/', include('Post.urls')),
+    path('api/subscription/', include('Subscription.urls')),
 ]
