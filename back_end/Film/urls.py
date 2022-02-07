@@ -20,5 +20,6 @@ urlpatterns = [
     path('video/<int:videoID>/', views.VideoRetrieveViewSet.as_view(), name='retVideo'),
     path('celebrity/<int:celebID>/', views.CelebrityRetrieveViewSet.as_view(), name='retCeleb'),
     path('film/buy/', views.FilmPurchaseView.as_view(), name='buyFilm'),
-    path('review/', views.ReviewCreateView.as_view(), name='review')
+    path('review/', views.ReviewCreateView.as_view(), name='review'),
+    path('review/<int:reviewID>/', views.ReviewRetrieveViewSet.as_view(), name='retReview')
 ]

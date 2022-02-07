@@ -305,3 +305,9 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
         Film.objects.filter(filmID=fID).update(filminoRating=fRating)
         Film.objects.filter(filmID=fID).update(numberOfFilminoRatings=fNumbers)
         return super().create(validated_data)
+
+
+class ReviewRetrieveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = '__all__'

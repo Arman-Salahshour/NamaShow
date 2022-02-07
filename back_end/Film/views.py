@@ -134,8 +134,21 @@ class FilmPurchaseView(generics.CreateAPIView):
         return FilmPurchase.objects.all()
 
 
+# Review
 class ReviewCreateView(generics.CreateAPIView):
     serializer_class = serializers.ReviewCreateSerializer
 
     def get_queryset(self):
         return Review.objects.all()
+
+
+# Review retrieve update destroy
+class ReviewRetrieveViewSet(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = ()
+    permission_classes = (AllowAny,)
+    serializer_class = serializers.ReviewRetrieveSerializer
+    queryset = Review.objects.all()
+    lookup_field = 'reviewID'
+
+    def get_queryset(self):
+        return self.queryset
