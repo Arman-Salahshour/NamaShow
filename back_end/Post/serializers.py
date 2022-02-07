@@ -7,7 +7,6 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = ('__all__')
         read_only_fields = ('postID',)
-        extra_kwargs = {'textOf': {'write_only': True,}}
 
 
 class PostRetrieveSerializer(serializers.ModelSerializer):

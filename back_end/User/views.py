@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import AllowAny
 from rest_framework import generics, viewsets
-from Core.models import Film, FilmPurchase, Payment
+from Core.models import Payment
 from User.serializers import UserInfoSerializer, UserSerializer, UserTokenSerializer \
                            , PaymentSerializer, UserUpdateSerializer, MyFilmsSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView

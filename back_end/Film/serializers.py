@@ -1,7 +1,8 @@
+from pyexpat import model
 from django.contrib.auth import get_user_model
 from django.forms import ValidationError
 from rest_framework import serializers
-from Core.models import Celebrity, FilmPurchase, Genre, Film, Video
+from Core.models import Celebrity, FilmPurchase, Genre, Film, Review, Video
 from Core.OMDBcrawler import search_omdb
 from datetime import datetime
 from django.contrib.auth.models import AnonymousUser
@@ -66,7 +67,7 @@ class FilmCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Film
         fields = '__all__'
-        read_only_fields = ('filmID', 'duration', 'rating', 'releaseDate', 'posterDirectory', 'posterURL', 'typeOf', 'salePercentage',
+        read_only_fields = ('filmID', 'duration', 'rating', 'releaseDate', 'posterDirectory', 'posterURL', 'typeOf', 'isAnimation', 'salePercentage',
                             'filmGenre', 'filmActor', 'filmDirector', 'filminoRating', 'numberOfFilminoRatings', 'detailsEn')
 
     def create(self, validated_data):
@@ -130,6 +131,14 @@ class FilmCreateSerializer(serializers.ModelSerializer):
                 genres.append(newGenre)
             validated_data['filmGenre'] = genres
 
+        
+        #IsAnimation
+        if('Animation' in genre_list):
+            validated_data['isAnimation'] = True
+        else:
+            validated_data['isAnimation'] = False
+
+
         #Actors
         if data['Actors']!='N/A':
             actor_list = data['Actors'].split(', ')
@@ -158,6 +167,20 @@ class FilmCreateSerializer(serializers.ModelSerializer):
 
 # Film retrieve serializer
 class FilmRetrieveSerializer(serializers.ModelSerializer):
+    class ReviewFilmSerialzier(serializers.ModelSerializer):
+        class UserReviewFilmSerializer(serializers.ModelSerializer):
+            class Meta:
+                model = get_user_model()
+                fields = ('userID', 'username', 'email')
+                read_only_fields = ('userID', 'username', 'email')
+
+        user = UserReviewFilmSerializer(read_only=True)
+
+        class Meta:
+            model = Review
+            fields = ('reviewID', 'textOf', 'rating', 'user')
+            read_only_fields = ('reviewID', 'textOf', 'rating', 'user')
+
     class GenreFilmSerializer(serializers.ModelSerializer):
         class Meta:
             model = Genre
@@ -180,6 +203,7 @@ class FilmRetrieveSerializer(serializers.ModelSerializer):
             ret = {'name': ret['nameOf'], 'id': ret['celebID']}
             return ret
 
+
     class VideoFilmSerializer(serializers.ModelSerializer):
         class Meta:
             model = Video
@@ -189,25 +213,31 @@ class FilmRetrieveSerializer(serializers.ModelSerializer):
     filmActor = CelebrityFilmSerializer(read_only=True, many=True)
     filmDirector = CelebrityFilmSerializer(read_only=True, many=True)
     videoDetails = VideoFilmSerializer(read_only=True, many=True, source='video_set')
+    reviews = ReviewFilmSerialzier(read_only=True, many=True, source='review_set')
+
     class Meta:
         model = Film
         fields = ('filmID', 'title', 'price', 'duration',
                   'typeOf', 'numberOfFilminoRatings', 'filminoRating',
                   'rating', 'releaseDate', 'detailsEn', 'detailsFa', 'salePercentage', 'saleExpiration', 'posterDirectory',
-                  'posterURL', 'filmGenre', 'filmActor', 'filmDirector', 'videoDetails')
+                  'posterURL', 'filmGenre', 'filmActor', 'filmDirector', 'videoDetails', 'reviews')
         read_only_fields = ('filmID',)
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         ret['user_purchased'] = False
+        ret['user_reviewed'] = False
         fID = ret['filmID']
         film = Film.objects.filter(filmID=fID).first()
         request = self.context.get("request")
         user = request.user
-        if(type(user) == AnonymousUser):
-            return ret
-        if(FilmPurchase.objects.filter(user=user).filter(film=film).first()):
-            ret['user_purchased'] = True
+        if(type(user) != AnonymousUser):
+            if(FilmPurchase.objects.filter(user=user).filter(film=film).first()):
+                ret['user_purchased'] = True
+            review = Review.objects.filter(user=user).filter(film=film).first()
+            if(review):
+                ret['user_reviewed'] = True
+                ret['user_review_id'] = int(getattr(review, 'reviewID'))
         return ret
 
 
@@ -247,4 +277,31 @@ class FilmPurchaseSerializer(serializers.ModelSerializer):
         balance = balance - price
         get_user_model().objects.filter(userID=uID).update(balance=balance)        
 
+        return super().create(validated_data)
+
+
+class ReviewCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ('reviewID', 'textOf', 'rating', 'user', 'film')
+        read_only_fields = ('reviewID', 'user')
+        extra_kwargs = {'rating': {'min_value': 0, 'max_value': 10}}
+    
+    def create(self, validated_data):
+        request = self.context.get("request")
+        user = request.user
+        validated_data['user'] = user
+        film = validated_data['film']
+        fID = getattr(film,'filmID')
+        prevRev = Review.objects.filter(user=user).filter(film=film).first()
+        if(prevRev):
+            raise ValidationError('Already have a review on this film.', code='rereview')
+        fRating = int(getattr(film,'filminoRating'))
+        fNumbers = int(getattr(film, 'numberOfFilminoRatings'))
+        total = fRating * fNumbers
+        fNumbers = fNumbers + 1
+        fRating = (total + int(validated_data['rating'])) / fNumbers
+        fID = getattr(film,'filmID')
+        Film.objects.filter(filmID=fID).update(filminoRating=fRating)
+        Film.objects.filter(filmID=fID).update(numberOfFilminoRatings=fNumbers)
         return super().create(validated_data)

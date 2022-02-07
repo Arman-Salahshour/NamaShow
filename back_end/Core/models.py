@@ -39,6 +39,7 @@ class Film(models.Model):
     price = models.PositiveIntegerField()
     duration = models.PositiveIntegerField()
     typeOf = models.IntegerField(validators=[MaxValueValidator(3), MinValueValidator(1),])
+    isAnimation = models.BooleanField(default=False)
     numberOfFilminoRatings = models.PositiveIntegerField(default=0)
     filminoRating = models.FloatField(default=0, validators=[MaxValueValidator(10), MinValueValidator(0),])
     rating = models.FloatField(default=0, validators=[MaxValueValidator(10), MinValueValidator(0),])
@@ -56,7 +57,7 @@ class Film(models.Model):
     filmDirector = models.ManyToManyField(Celebrity, related_name='film_director')
 
     def __str__(self):
-        return f"{self.title} {self.releaseDate.strftime('%Y')}"
+        return self.title
 
 
 class UserManager(BaseUserManager):

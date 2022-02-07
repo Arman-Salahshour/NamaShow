@@ -1,7 +1,7 @@
 from rest_framework import viewsets, mixins, generics
 from rest_framework.permissions import AllowAny
 from rest_framework.pagination import PageNumberPagination
-from Core.models import Celebrity, FilmPurchase, Genre, Film, Video
+from Core.models import Celebrity, FilmPurchase, Genre, Film, Review, Video
 from Film import serializers
 
 # Create your views here.
@@ -132,3 +132,10 @@ class FilmPurchaseView(generics.CreateAPIView):
 
     def get_queryset(self):
         return FilmPurchase.objects.all()
+
+
+class ReviewCreateView(generics.CreateAPIView):
+    serializer_class = serializers.ReviewCreateSerializer
+
+    def get_queryset(self):
+        return Review.objects.all()

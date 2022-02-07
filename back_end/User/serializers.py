@@ -3,7 +3,7 @@ from django.forms import ValidationError
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from Core.models import Film, FilmPurchase, Payment, Subscription
+from Core.models import Film, FilmPurchase, Payment, Review, Subscription
 import datetime
 
 
@@ -153,6 +153,6 @@ class MyFilmsSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['my-films'] = data['filmpurchase_set']
+        data['myFilms'] = data['filmpurchase_set']
         data.pop('filmpurchase_set')
         return data
